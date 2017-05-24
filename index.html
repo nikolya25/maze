@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Maze game</title>
+
+	<link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="lib/jasmine-1.2.0/jasmine.css">
+    <meta name="viewport" content="width=device-width">	
+</head>
+<body class="index">
+	<form id="formMaze">
+		<fieldset oninput="canvasWidthChosen.value = parseInt(canvasWidthChoice.value) * 5">
+			<input id="canvasWidthChoice" name="canvasWidthChoice" type="range" min="1" max="10" value="1"/> = 
+			<output name="canvasWidthChosen" for="canvasWidthChoice">5</output>
+		</fieldset>
+		<fieldset oninput="canvasHeightChosen.value = parseInt(canvasHeightChoice.value) * 5"> 
+			<input id="canvasHeightChoice" name="canvasHeightChoice" type="range" min="1" max="10" value="1"/> = 
+			<output name="canvasHeightChosen" for="canvasHeightChoice" value="5">5</output>
+		</fieldset>
+		<input type="button" onclick="createMaze()" value="GENERATE"/>
+	</form>
+	<p id="pleasewait" style="display: none">Generating maze, please wait ...</p>
+    <p id="timer" style="display: none"></p>
+	<canvas id="maze"></canvas>
+	<p id="congratulations" style="display: none">"Congratulations!!! You won!!!"</p>
+    <input type="submit" value="Solve Maze" id="solve" style="display: none"></input>
+	<input type="submit" value="Again" id="again" style="display: none"></input>
+
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/underscore-min.js"></script>
+    <script src="src/js/array.js"></script>
+    <script src="src/js/cell.js"></script>
+    <script src="src/js/mazeGenerator.js"></script>
+    <script src="src/js/graph.js"></script>
+    <script src="src/js/maze.js"></script>
+	<script src="src/js/game.js"></script>
+    <script>
+        var widthElem;
+		var heightElem;
+		var canvasElem;
+		var horizCellsNumber;
+		var vertCellsNumber;
+		var maze;
+		var formElem = $('#formMaze')
+        var waitElem = $('#pleasewait');
+		
+		function createMaze() {
+			widthElem = document.getElementById("canvasWidthChoice").value;
+			heightElem = document.getElementById("canvasHeightChoice").value; 
+			canvasElem = document.getElementById("maze");
+			waitElem.show();
+			
+			setTimeout(function() {
+				canvasElem.width = widthElem * 100;
+				canvasElem.height = heightElem * 100;
+				horizCellsNumber = widthElem * 5;
+				vertCellsNumber =  heightElem * 5;
+				cellWidth = canvasElem.width / horizCellsNumber;
+				cellHeight = canvasElem.height / vertCellsNumber;
+				formElem.remove();
+				waitElem.remove();
+				maze = new Maze(horizCellsNumber, vertCellsNumber, cellWidth, cellHeight);
+				maze.generate();
+				maze.draw();
+			}, 1000);
+		}
+        $(function() {
+            $('#solve').click(function() {
+                maze.solve();
+            });
+        });
+		
+		$(function() {
+            $('#again').click(function() {
+                window.location.reload();
+            });
+        });
+		
+    </script>
+</body>
+</html>
